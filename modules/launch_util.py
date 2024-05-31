@@ -1,12 +1,13 @@
-import os
 import importlib
+import importlib.metadata
 import importlib.util
+import logging
+import os
+import re
 import shutil
 import subprocess
 import sys
-import re
-import logging
-import importlib.metadata
+
 import packaging.version
 from packaging.requirements import Requirement
 
@@ -90,7 +91,8 @@ def requirements_met(requirements_file):
 
                 # Check if the installed version satisfies the requirement
                 if installed_version not in requirement.specifier:
-                    print(f"Version mismatch for {package}: Installed version {version_installed} does not meet requirement {requirement}")
+                    print(
+                        f"Version mismatch for {package}: Installed version {version_installed} does not meet requirement {requirement}")
                     return False
             except Exception as e:
                 print(f"Error checking version for {package}: {e}")

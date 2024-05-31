@@ -41,4 +41,3 @@ def get_quantization_config(device: torch.device) -> tuple[BitsAndBytesConfig, t
         device = "auto"
 
     return quantization_config, dtype, device
-

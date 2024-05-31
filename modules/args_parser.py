@@ -1,4 +1,5 @@
 import argparse
+
 import torch
 
 parser = argparse.ArgumentParser()
@@ -16,7 +17,8 @@ vram_group.add_argument("--always-cpu", type=int, nargs="?", metavar="CPU_NUM_TH
 
 quantization_group = parser.add_mutually_exclusive_group()
 quantization_group.add_argument("--load-in-4bit", action="store_true")
-quantization_group.add_argument("--load-in-8bit", action="store_true", help="Slower compared to default or --load-in-4bit")
+quantization_group.add_argument("--load-in-8bit", action="store_true",
+                                help="Slower compared to default or --load-in-4bit")
 quantization_group.add_argument("--always-offload-from-vram", action="store_true")
 
 parser.add_argument("--gpu-device-id", type=int, default=None, metavar="DEVICE_ID")
@@ -32,6 +34,7 @@ args = parser.parse_args()
 
 if args.disable_analytics:
     import os
+
     os.environ["GRADIO_ANALYTICS_ENABLED"] = "False"
 
 if args.gpu_device_id is not None:
