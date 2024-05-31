@@ -12,16 +12,22 @@ def describe_image(image_filepaths, prompt):
     preparation_start_time = time.perf_counter()
     processor, model = init_model()
 
-    if prompt == '':
-        prompt = None
-
     if prompt:
         print(f"[Describe] Raw Prompt: {prompt}")
         prompt = f"Question: {prompt} Answer:"
         print(f"[Describe] Prompt: {prompt}")
 
     images = [Image.open(image_filepath) for image_filepath in image_filepaths]
-    inputs = processor(images=images, text=[prompt for _ in range(len(images))], return_tensors="pt")
+
+    params = {
+        'images': images,
+        'return_tensors': "pt"
+    }
+
+    if prompt:
+        params['text'] = [prompt if prompt is not None else '' for _ in range(len(images))]
+
+    inputs = processor(**params)
 
     moving_start_time = time.perf_counter()
 
