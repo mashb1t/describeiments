@@ -5,7 +5,7 @@ from modules.inference import describe_image
 
 demo = gr.Interface(
     fn=describe_image,
-    inputs=["image", gr.Textbox(label="prompt")],
+    inputs=[gr.File(label="Images", file_count="multiple", file_types=['image']), gr.Textbox(label="prompt")],
     outputs=[gr.Textbox(label="description")],
 )
 demo.launch(

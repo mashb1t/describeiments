@@ -1,6 +1,7 @@
 import time
 
 import torch
+from PIL import Image
 
 from modules import args_parser
 from modules.model_management import load_device, offload_device, init_model
@@ -8,17 +9,21 @@ from modules.model_management import load_device, offload_device, init_model
 
 @torch.no_grad()
 @torch.inference_mode()
-def describe_image(image, prompt):
+def describe_image(image_filepaths, prompt):
     print(f"[Describe] ===== Processing start =====")
     preparation_start_time = time.perf_counter()
     processor, model = init_model()
+
+    if prompt == '':
+        prompt = None
 
     if prompt:
         print(f"[Describe] Raw Prompt: {prompt}")
         prompt = f"Question: {prompt} Answer:"
         print(f"[Describe] Prompt: {prompt}")
 
-    inputs = processor(images=image, text=prompt, return_tensors="pt")
+    images = [Image.open(image_filepath) for image_filepath in image_filepaths]
+    inputs = processor(images=images, text=prompt, return_tensors="pt")
 
     moving_start_time = time.perf_counter()
 
@@ -34,8 +39,10 @@ def describe_image(image, prompt):
     execution_start_time = time.perf_counter()
 
     generated_ids = model.generate(**inputs)
-    description = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-    print(f'[Describe] Description: {description}')
+    descriptions = processor.batch_decode(generated_ids, skip_special_tokens=True)
+    descriptions = [i.strip() for i in descriptions]
+
+    print(f'[Describe] Descriptions: {descriptions}')
 
     execution_time = time.perf_counter() - execution_start_time
     print(f'[Describe] Generating time: {execution_time:.2f} seconds')
@@ -53,4 +60,4 @@ def describe_image(image, prompt):
     print(f'[Describe] Processing time: {total_time:.2f} seconds')
     print(f'[Describe] ===== Processing done =====')
 
-    return description
+    return "\n".join(descriptions)
