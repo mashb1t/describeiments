@@ -22,8 +22,11 @@ def describe(image, prompt):
     inputs = processor(images=image, text=prompt, return_tensors="pt")
 
     moving_start_time = time.perf_counter()
-    inputs.to(load_device)
-    model.to(load_device)
+
+    if not args_parser.args.is_quantized:
+        inputs.to(load_device)
+        model.to(load_device)
+
     moving_intermediate_time = time.perf_counter() - moving_start_time
 
     preparation_time = time.perf_counter() - preparation_start_time
@@ -40,9 +43,10 @@ def describe(image, prompt):
 
     moving_start_time = time.perf_counter()
 
-    model.to(offload_device)
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+    if not args_parser.args.is_quantized:
+        model.to(offload_device)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     moving_time = time.perf_counter() - moving_start_time + moving_intermediate_time
     total_time = time.perf_counter() - preparation_start_time

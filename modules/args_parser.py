@@ -14,7 +14,11 @@ vram_group = parser.add_mutually_exclusive_group()
 vram_group.add_argument("--always-gpu", action="store_true")
 vram_group.add_argument("--always-cpu", type=int, nargs="?", metavar="CPU_NUM_THREADS", const=-1)
 
-parser.add_argument("--always-offload-from-vram", action="store_true")
+quantization_group = parser.add_mutually_exclusive_group()
+quantization_group.add_argument("--load-in-4bit", action="store_true")
+quantization_group.add_argument("--load-in-8bit", action="store_true", help="Slower compared to default or --load-in-4bit")
+quantization_group.add_argument("--always-offload-from-vram", action="store_true")
+
 parser.add_argument("--gpu-device-id", type=int, default=None, metavar="DEVICE_ID")
 
 parser.add_argument("--temp-path", type=str, default=None)
@@ -38,3 +42,5 @@ if args.always_cpu:
     if args.always_cpu > 0:
         torch.set_num_threads(args.always_cpu)
     print(f"Running on {torch.get_num_threads()} CPU threads")
+
+args.is_quantized = args.load_in_4bit or args.load_in_8bit
