@@ -7,8 +7,6 @@ from modules import args_parser
 from modules.model_management import load_device, offload_device, init_model
 
 
-@torch.no_grad()
-@torch.inference_mode()
 def describe_image(image_filepaths, prompt):
     print(f"[Describe] ===== Processing start =====")
     preparation_start_time = time.perf_counter()
@@ -23,7 +21,7 @@ def describe_image(image_filepaths, prompt):
         print(f"[Describe] Prompt: {prompt}")
 
     images = [Image.open(image_filepath) for image_filepath in image_filepaths]
-    inputs = processor(images=images, text=prompt, return_tensors="pt")
+    inputs = processor(images=images, text=[prompt for _ in range(len(images))], return_tensors="pt")
 
     moving_start_time = time.perf_counter()
 
