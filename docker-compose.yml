@@ -1,0 +1,29 @@
+volumes:
+  fooder-external:
+
+services:
+  app:
+    build: .
+    image: ghcr.io/mashb1t/describeiments
+    ports:
+     - "7860:7860"
+    environment:
+      - CMDARGS=--listen --share
+    volumes:
+      - fooder-external:/content/external
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: [compute, utility]
+
+  fix-volume-permissions:
+    build: .
+    image: ghcr.io/mashb1t/describeiments
+    user: root
+    command: chown user:user /content/external
+    volumes:
+      - fooder-external:/content/external
