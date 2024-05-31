@@ -1,5 +1,5 @@
 volumes:
-  fooder-external:
+  describeiments-external:
 
 services:
   app:
@@ -10,7 +10,7 @@ services:
     environment:
       - CMDARGS=--listen --share
     volumes:
-      - fooder-external:/content/external
+      - describeiments-external:/content/external
     tty: true
     deploy:
       resources:
@@ -26,4 +26,4 @@ services:
     user: root
     command: chown user:user /content/external
     volumes:
-      - fooder-external:/content/external
+      - describeiments-external:/content/external
